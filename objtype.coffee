@@ -19,7 +19,7 @@
         return "object"
     
     Thoughts:
-        I am not sure what this does other than lower-case the class name. 
+        I am not sure what this does other than lower-case the type name. 
       The CS Cookbook guys say it's based on jQuery's implementation, so I am
       probably being stupid. In any case, it's not very aesthetically pleasing.
   
@@ -41,25 +41,29 @@
       });
     
     Thoughts:
-        
-    
-  My Favorite Method Du Jour
+        Creating individual checkers feels hefty, as the function name uses
+      as many letters as the string check would. Also, is it just me, or does
+      this implementation re-allocate the '[object Type]' bit each time it's
+      called? Would a clever interpreter cache that expression?
+  
+  
+  My Implementation
   --------------------------
     
     Thoughts:
-        Basically, don't lower-case the type string, and don't build extra
-      functions for each type. Favors form over speed (no native checks,
-      .substring allocates a string), but for time-insensitive apps it feels
-      very general and elegant; small enough to include inline without
-      distracting from application logic. ###
+        Favors form over speed (no native checks, substring allocates a string),
+      but for time-insensitive apps it feels very general and elegant; small
+      enough to include inline without distracting from application logic. ###
 
 
+module.exports.objType =
 objType = (obj) -> 
   str = Object.prototype.toString.call(obj)
   str.substring(8, str.length-1)
 
 
-test_objType = () ->
+module.exports.test_objType =
+test_objType =  (unused, args) ->
   return "objType: failed on type '#{type}'" unless objType(value) is type \
     for type, val of \
       'String'     :  'Hello World'
@@ -67,10 +71,11 @@ test_objType = () ->
       'Function'   :  (some, args) -> 'some value'
       'Object'     :  { obj: 'with', some: 'props' }
       'Array'      :  [ 'some', 'array', 'elements' ]
+      'Arguments'  :  arguments
+      'Date'       :  new Date()
+      'RegExp'     :  /^(?:[-=]>|[-+*\/%<>&|^!?=]=|>>>=?/
       'Null'       :  null
-      'Undefined'  :  IDoNotExist.___Hopefully
+      'Undefined'  :  IDoNotExist
   true
-  
-  
   
   
